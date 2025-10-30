@@ -1,0 +1,27 @@
+name: Daily Commit Bot
+
+on:
+  schedule:
+    - cron: "0 0 * * *"  # Runs every day at midnight UTC
+  workflow_dispatch:     # Allows manual run too
+
+jobs:
+  auto-commit:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Make changes
+        run: |
+          echo "Updated at $(date)" >> data.txt
+
+      - name: Commit changes
+        run: |
+          git config --global user.name "GitHub Action Bot"
+          git config --global user.email "actions@github.com"
+          git add .
+          git commit -m "🤖 Daily commit $(date)" || echo "No changes to commit"
+          git push
